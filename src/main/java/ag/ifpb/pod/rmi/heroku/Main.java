@@ -14,14 +14,9 @@ import org.eclipse.jetty.webapp.WebAppContext;
  */
 public class Main {
   
-  public static void startServer() throws Exception{
+  public static void startServer(int port) throws Exception{
     //
     String webappDirLocation = "src/main/webapp/";
-    //
-    String webPort = System.getenv("PORT");
-    if(webPort == null || webPort.isEmpty()) {
-        webPort = "8080";
-    }
     //
     WebAppContext root = new WebAppContext();
     root.setContextPath("/cgi-bin/java-rmi.cgi");
@@ -29,19 +24,30 @@ public class Main {
     root.setResourceBase(webappDirLocation);
     root.setParentLoaderPriority(true);
     //
-    Server server = new Server(Integer.valueOf(webPort));
+    Server server = new Server(port);
     server.setHandler(root);
     server.start();
     server.join();   
   }
   
-  public static void startService() throws RemoteException, AlreadyBoundException{
-    Registry registry = LocateRegistry.createRegistry(1099);
+  public static void startService(int port) throws RemoteException, AlreadyBoundException{
+    Registry registry = LocateRegistry.createRegistry(port);
     registry.bind(HelloWorldRemote.SERVICE_NAME, new HelloWorldRemoteImpl());
   }
   
   public static void main(String[] args) throws Exception {
-    startService();
-    startServer();
+    //
+    Integer rmiPort = 1099;
+    Integer webPort = 8080;
+    //
+    String _port = System.getenv("PORT");
+    if(_port == null || _port.isEmpty()) {
+        webPort = Integer.parseInt(_port);
+    }
+    //
+    //startService(rmiPort);
+    //startServer(webPort);
+    //
+    startService(webPort);
   }
 }
