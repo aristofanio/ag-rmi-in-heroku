@@ -1,38 +1,25 @@
 package ag.ifpb.pod.rmi.heroku;
 
-import junit.framework.Test;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
-/**
- * Unit test for simple App.
- */
-public class MainTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public MainTest( String testName )
-    {
-        super( testName );
+public class MainTest extends TestCase {
+  
+  public void testApp() {
+    try {
+      Registry registry = LocateRegistry.getRegistry(8080);
+      HelloWorldRemote remote = (HelloWorldRemote) registry.lookup(HelloWorldRemote.SERVICE_NAME);
+      System.out.println(remote.helloWorld());
     }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( MainTest.class );
+    catch(RemoteException e){
+      e.printStackTrace();
+    } 
+    catch (NotBoundException e) {
+      e.printStackTrace();
     }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+  }
 }
