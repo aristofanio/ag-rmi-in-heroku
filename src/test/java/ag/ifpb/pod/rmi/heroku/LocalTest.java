@@ -7,7 +7,7 @@ import java.rmi.registry.Registry;
 
 import junit.framework.TestCase;
 
-public class MainTest extends TestCase {
+public class LocalTest extends TestCase {
   
   public void testApp() {
     try {
