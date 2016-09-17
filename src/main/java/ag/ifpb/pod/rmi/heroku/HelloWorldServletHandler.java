@@ -11,11 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 public class HelloWorldServletHandler extends HttpServlet {
   
   @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
+    resp.getWriter().println("OK");
+    resp.getWriter().flush();
+  }
+  
+  @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
     ServletForwarder forwarder = new ServletForwarder();
     try {
-      forwarder.forward(req, resp);
+      String port = req.getParameter("forward");
+      forwarder.forward(req, resp, Integer.parseInt(port));
     } 
     catch (ServletForwarderException e) {
       e.printStackTrace();

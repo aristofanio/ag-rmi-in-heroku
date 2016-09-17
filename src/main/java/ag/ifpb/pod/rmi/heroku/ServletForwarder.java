@@ -32,11 +32,16 @@ public class ServletForwarder {
     DataOutputStream socketOut = null;
     // send to local server in HTTP
     try {
+      //
+      System.out.println("----> request inicializado sucesso.");
+      //
       socketOut = new DataOutputStream(localServer.getOutputStream());
       socketOut.writeBytes("POST / HTTP/1.0\r\n");
       socketOut.writeBytes("Content-length: " + request.getContentLength() + "\r\n\r\n");
       socketOut.write(buffer);
       socketOut.flush();
+      //
+      System.out.println("----> request finalizado com sucesso.");
     } 
     catch (IOException e) {
       throw new ServletForwarderException("error writing to server");
@@ -46,7 +51,6 @@ public class ServletForwarder {
   private void forwardResponse(HttpServletResponse response, Socket localServer) throws IOException, 
       ServletForwarderException {
     //
-    byte[] buffer;
     DataInputStream socketIn;
     try {
       socketIn = new DataInputStream(localServer.getInputStream());
@@ -55,10 +59,10 @@ public class ServletForwarder {
       throw new ServletForwarderException("error reading from " + "server");
     }
     //
-    String key = "Content-length:".toLowerCase();
     boolean contentLengthFound = false;
     String line;
     int responseContentLength = -1;
+    String key = "Content-length:".toLowerCase();
     //
     do {
       //
@@ -82,7 +86,7 @@ public class ServletForwarder {
     if (!contentLengthFound || responseContentLength < 0)
       throw new ServletForwarderException("missing or invalid content length in server response");
     //
-    buffer = new byte[responseContentLength];
+    byte[] buffer = new byte[responseContentLength];
     try {
       socketIn.readFully(buffer);
     } 
@@ -98,20 +102,23 @@ public class ServletForwarder {
     response.setContentLength(buffer.length);
     //
     try {
+      System.out.println("----> response inicializado sucesso.");
       OutputStream out = response.getOutputStream();
       out.write(buffer);
       out.flush();
+      System.out.println("----> response finalizado com sucesso.");
     } 
     catch (IOException e) {
       throw new ServletForwarderException("error writing response");
     }
   }
 
-  public void forward(HttpServletRequest req, HttpServletResponse resp)
+  public void forward(HttpServletRequest req, HttpServletResponse resp, int port)
       throws IOException, ServletForwarderException {
+    //
     Socket localSocket = null;
     try {
-      localSocket = new Socket(InetAddress.getLocalHost(), 1099);
+      localSocket = new Socket(InetAddress.getLocalHost(), port);
       forwardRequest(req, localSocket);
       forwardResponse(resp, localSocket);
     } 

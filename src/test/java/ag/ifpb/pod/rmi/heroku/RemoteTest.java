@@ -15,15 +15,14 @@ public class RemoteTest extends TestCase {
   public void testApp() {
     try {
       //
-      RMISocketFactory.setSocketFactory(
-          new sun.rmi.transport.proxy.RMIHttpToCGISocketFactory());
+      RMISocketFactory.setSocketFactory(new sun.rmi.transport.proxy.RMIHttpToCGISocketFactory());
       //
       Registry registry = LocateRegistry.getRegistry(
-          "ag-rmi-in-heroku.herokuapp.com", 80,
-          RMISocketFactory.getSocketFactory());
+          "ag-rmi-in-heroku.herokuapp.com", 1099, RMISocketFactory.getSocketFactory()
+          //"127.0.0.1", 1099, RMISocketFactory.getSocketFactory()
+      );
       //
-      HelloWorldRemote remote = (HelloWorldRemote) registry
-          .lookup(HelloWorldRemote.SERVICE_NAME);
+      HelloWorldRemote remote = (HelloWorldRemote) registry.lookup(HelloWorldRemote.SERVICE_NAME);
       //
       System.out.println(remote.helloWorld());
       //

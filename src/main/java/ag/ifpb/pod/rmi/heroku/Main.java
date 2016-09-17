@@ -16,10 +16,10 @@ public class Main {
   
   public static void startServer(int port) throws Exception{
     //
-    String webappDirLocation = "src/main/webapp/";
+    String webappDirLocation = "src/main/webapp";
     //
     WebAppContext root = new WebAppContext();
-    root.setContextPath("/cgi-bin/java-rmi.cgi");
+    root.setContextPath("/");
     root.setDescriptor(webappDirLocation+"/WEB-INF/web.xml");
     root.setResourceBase(webappDirLocation);
     root.setParentLoaderPriority(true);
@@ -31,6 +31,7 @@ public class Main {
   }
   
   public static void startService(int port) throws RemoteException, AlreadyBoundException{
+    //System.setProperty("java.rmi.server.hostname", "localhost");
     Registry registry = LocateRegistry.createRegistry(port);
     registry.bind(HelloWorldRemote.SERVICE_NAME, new HelloWorldRemoteImpl());
   }
@@ -38,14 +39,16 @@ public class Main {
   public static void main(String[] args) throws Exception {
     //
     Integer rmiPort = 1099;
-    Integer webPort = 8080;
+    Integer webPort = 80;
     //
     String _port = System.getenv("PORT");
-    if(_port == null || _port.isEmpty()) {
+    if(_port != null && !_port.isEmpty()) {
         webPort = Integer.parseInt(_port);
     }
     //
     startService(rmiPort);
     startServer(webPort);
+    //
+    //startService(webPort);
   }
 }
