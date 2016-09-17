@@ -45,9 +45,7 @@ public class Main {
         webPort = Integer.parseInt(_port);
     }
     //
-    //startService(rmiPort);
-    //startServer(webPort);
-    //
-    startService(webPort);
+    startService(rmiPort);
+    startServer(webPort);
   }
 }

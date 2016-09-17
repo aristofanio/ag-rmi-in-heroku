@@ -13,6 +13,13 @@ public class HelloWorldServletHandler extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    System.out.println("Chamada RMI realizada.");
+    ServletForwarder forwarder = new ServletForwarder();
+    try {
+      forwarder.forward(req, resp);
+    } 
+    catch (ServletForwarderException e) {
+      e.printStackTrace();
+      throw new IOException(e.getMessage());
+    }
   }
 }
